@@ -38,7 +38,6 @@ public class Driver {
     private Integer totalCancelledTrips;
     private Integer totalDelayedTrips;
 
-    private Double onTimePercentage;
 
     private Integer incidentCount;
 
