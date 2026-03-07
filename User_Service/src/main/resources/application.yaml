@@ -7,8 +7,14 @@ spring:
     username: postgres
     password: Sharan@2005
 
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
       hibernate:
-        ddl-auto: update
-      properties:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+  jackson:
+    deserialization:
+      fail-on-null-for-primitives: false

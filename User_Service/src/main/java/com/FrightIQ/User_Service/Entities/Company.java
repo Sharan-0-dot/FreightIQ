@@ -6,41 +6,39 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "drivers")
-public class Driver {
+@Table(name = "companies")
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(nullable = false)
     private String name;
-    private Integer age;
-    private Integer experienceYears;
 
     @Column(unique = true, nullable = false)
-    private String licenseNumber;
-
-    private LocalDate licenseValidTill;
+    private String email;
 
     @Column(unique = true, nullable = false)
     private String phone;
 
+    @Column(unique = true, nullable = false)
+    private String gstNumber;
+
+    private String industry;
+
+    private String city;
+    private String state;
+
     private Double ratingAverage;
-
-    private Integer totalCompletedTrips;
-    private Integer totalAcceptedTrips;
-    private Integer totalCancelledTrips;
-    private Integer totalDelayedTrips;
-
-
-    private Integer incidentCount;
+    private Integer totalShipmentsPosted;
+    private Integer totalShipmentsCompleted;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

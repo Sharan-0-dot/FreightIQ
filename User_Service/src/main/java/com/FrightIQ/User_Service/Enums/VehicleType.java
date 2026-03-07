@@ -1,4 +1,4 @@
-package com.FrightIQ.User_Service.Entities;
+package com.FrightIQ.User_Service.Enums;
 
 public enum VehicleType {
     MINI_TRUCK,          // Tata Ace / small city delivery

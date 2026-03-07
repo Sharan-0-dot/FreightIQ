@@ -1,5 +1,6 @@
 package com.FrightIQ.User_Service.Entities;
 
+import com.FrightIQ.User_Service.Enums.VehicleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "vehicles")
 public class Vehicle {
 
     @Id
