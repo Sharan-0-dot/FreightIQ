@@ -1,4 +1,4 @@
-package com.FrightIQ.User_Service.Enums;
+package com.FreightIQ.ShipmentService.Enums;
 
 public enum CargoType {
     GENERAL,

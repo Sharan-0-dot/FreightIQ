@@ -66,4 +66,53 @@ public class DriverService {
         }
         driverRepository.deleteById(id);
     }
+
+    public Driver incrementCompletedTrips(String id) {
+        Driver driver = getDriverById(id);
+        driver.setTotalCompletedTrips(driver.getTotalCompletedTrips() + 1);
+        return driverRepository.save(driver);
+    }
+
+    public Driver incrementAcceptedTrips(String id) {
+        Driver driver = getDriverById(id);
+        driver.setTotalAcceptedTrips(driver.getTotalAcceptedTrips() + 1);
+        return driverRepository.save(driver);
+    }
+
+    public Driver incrementCancelledTrips(String id) {
+        Driver driver = getDriverById(id);
+        driver.setTotalCancelledTrips(driver.getTotalCancelledTrips() + 1);
+        return driverRepository.save(driver);
+    }
+
+    public Driver incrementDelayedTrips(String id) {
+        Driver driver = getDriverById(id);
+        driver.setTotalDelayedTrips(driver.getTotalDelayedTrips() + 1);
+        return driverRepository.save(driver);
+    }
+
+    public Driver incrementIncidentCount(String id) {
+        Driver driver = getDriverById(id);
+        driver.setIncidentCount(driver.getIncidentCount() + 1);
+        return driverRepository.save(driver);
+    }
+
+    public Driver updateRating(String id, Double newRating) {
+        if (newRating < 1.0 || newRating > 5.0) {
+            throw new RuntimeException("Rating must be between 1.0 and 5.0");
+        }
+
+        Driver driver = getDriverById(id);
+        int totalReviews = driver.getTotalCompletedTrips(); // reviews = completed trips
+
+        if (totalReviews == 0) {
+            driver.setRatingAverage(newRating);
+        } else {
+            // Rolling average: ((currentAvg * totalReviews) + newRating) / (totalReviews + 1)
+            double updatedAvg = ((driver.getRatingAverage() * totalReviews) + newRating) / (totalReviews + 1);
+            driver.setRatingAverage(Math.round(updatedAvg * 100.0) / 100.0); // round to 2 decimal places
+        }
+
+        return driverRepository.save(driver);
+    }
 }

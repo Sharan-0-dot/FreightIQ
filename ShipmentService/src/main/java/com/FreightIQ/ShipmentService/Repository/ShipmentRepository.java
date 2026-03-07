@@ -1,7 +1,8 @@
-package com.FrightIQ.User_Service.Repository;
+package com.FreightIQ.ShipmentService.Repository;
 
-import com.FrightIQ.User_Service.Entities.Shipment;
-import com.FrightIQ.User_Service.Enums.ShipmentStatus;
+
+import com.FreightIQ.ShipmentService.Enums.ShipmentStatus;
+import com.FreightIQ.ShipmentService.Entities.Shipment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

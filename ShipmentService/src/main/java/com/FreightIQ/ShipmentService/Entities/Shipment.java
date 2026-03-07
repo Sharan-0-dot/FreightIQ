@@ -1,8 +1,9 @@
-package com.FrightIQ.User_Service.Entities;
+package com.FreightIQ.ShipmentService.Entities;
 
-import com.FrightIQ.User_Service.Enums.CargoType;
-import com.FrightIQ.User_Service.Enums.PriorityType;
-import com.FrightIQ.User_Service.Enums.ShipmentStatus;
+
+import com.FreightIQ.ShipmentService.Enums.CargoType;
+import com.FreightIQ.ShipmentService.Enums.PriorityType;
+import com.FreightIQ.ShipmentService.Enums.ShipmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

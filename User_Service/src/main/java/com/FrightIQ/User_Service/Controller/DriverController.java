@@ -52,4 +52,58 @@ public class DriverController {
         }
     }
 
+    @PatchMapping("/{id}/trips/completed")
+    public ResponseEntity<?> incrementCompletedTrips(@PathVariable String id) {
+        try {
+            return new ResponseEntity<>(driverService.incrementCompletedTrips(id), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/trips/accepted")
+    public ResponseEntity<?> incrementAcceptedTrips(@PathVariable String id) {
+        try {
+            return new ResponseEntity<>(driverService.incrementAcceptedTrips(id), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/trips/cancelled")
+    public ResponseEntity<?> incrementCancelledTrips(@PathVariable String id) {
+        try {
+            return new ResponseEntity<>(driverService.incrementCancelledTrips(id), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/trips/delayed")
+    public ResponseEntity<?> incrementDelayedTrips(@PathVariable String id) {
+        try {
+            return new ResponseEntity<>(driverService.incrementDelayedTrips(id), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/incident")
+    public ResponseEntity<?> incrementIncidentCount(@PathVariable String id) {
+        try {
+            return new ResponseEntity<>(driverService.incrementIncidentCount(id), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/{id}/rating")
+    public ResponseEntity<?> updateRating(@PathVariable String id, @RequestParam Double newRating) {
+        try {
+            return new ResponseEntity<>(driverService.updateRating(id, newRating), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

@@ -1,7 +1,8 @@
-package com.FrightIQ.User_Service.Controller;
+package com.FreightIQ.ShipmentService.Controller;
 
-import com.FrightIQ.User_Service.Entities.Shipment;
-import com.FrightIQ.User_Service.Service.ShipmentService;
+
+import com.FreightIQ.ShipmentService.Entities.Shipment;
+import com.FreightIQ.ShipmentService.Service.ShipmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

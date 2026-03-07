@@ -1,8 +1,9 @@
-package com.FrightIQ.User_Service.Service;
+package com.FreightIQ.ShipmentService.Service;
 
-import com.FrightIQ.User_Service.Entities.Shipment;
-import com.FrightIQ.User_Service.Enums.ShipmentStatus;
-import com.FrightIQ.User_Service.Repository.ShipmentRepository;
+
+import com.FreightIQ.ShipmentService.Enums.ShipmentStatus;
+import com.FreightIQ.ShipmentService.Entities.Shipment;
+import com.FreightIQ.ShipmentService.Repository.ShipmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -105,10 +106,10 @@ public class ShipmentService {
 
     private void validateStatusTransition(ShipmentStatus current, ShipmentStatus next) {
         boolean valid = switch (current) {
-            case OPEN       -> next == ShipmentStatus.ASSIGNED   || next == ShipmentStatus.CANCELLED;
-            case ASSIGNED   -> next == ShipmentStatus.IN_TRANSIT || next == ShipmentStatus.CANCELLED;
-            case IN_TRANSIT -> next == ShipmentStatus.DELIVERED  || next == ShipmentStatus.CANCELLED;
-            case DELIVERED, CANCELLED -> false; // terminal states
+            case ShipmentStatus.OPEN       -> next == ShipmentStatus.ASSIGNED   || next == ShipmentStatus.CANCELLED;
+            case ShipmentStatus.ASSIGNED   -> next == ShipmentStatus.IN_TRANSIT || next == ShipmentStatus.CANCELLED;
+            case ShipmentStatus.IN_TRANSIT -> next == ShipmentStatus.DELIVERED  || next == ShipmentStatus.CANCELLED;
+            case ShipmentStatus.DELIVERED, ShipmentStatus.CANCELLED -> false; // terminal states
         };
 
         if (!valid) {

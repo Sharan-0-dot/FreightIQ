@@ -8,11 +8,11 @@
 		<version>4.0.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.FrightIQ</groupId>
-	<artifactId>User_Service</artifactId>
+	<groupId>com.FreightIQ</groupId>
+	<artifactId>ShipmentService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>User_Service</name>
-	<description>User service for driver registration and company registration</description>
+	<name>ShipmentService</name>
+	<description>Shipment service layer for FreightIQ</description>
 	<url/>
 	<licenses>
 		<license/>
