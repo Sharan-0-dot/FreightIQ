@@ -1,20 +1,32 @@
 package com.FreightIQ.ShipmentService.Service;
 
 
+import com.FreightIQ.ShipmentService.Client.UserServiceClient;
 import com.FreightIQ.ShipmentService.Enums.ShipmentStatus;
 import com.FreightIQ.ShipmentService.Entities.Shipment;
 import com.FreightIQ.ShipmentService.Repository.ShipmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ShipmentService {
+
+    private final UserServiceClient userServiceClient;
     private final ShipmentRepository shipmentRepository;
 
+    @Transactional
     public Shipment postShipment(Shipment shipment) {
+
+        try {
+            userServiceClient.getCompanyById(shipment.getCompanyId());
+        } catch (Exception e) {
+            throw new RuntimeException("Validation failed: Company with ID " + shipment.getCompanyId() + " does not exist.");
+        }
+
         shipment.setStatus(ShipmentStatus.OPEN);
         shipment.setAssignedDriverId(null);
         return shipmentRepository.save(shipment);
@@ -65,6 +77,7 @@ public class ShipmentService {
         return shipmentRepository.save(existing);
     }
 
+    @Transactional
     public Shipment assignDriver(String shipmentId, String driverId) {
         Shipment shipment = getShipmentById(shipmentId);
 
@@ -72,11 +85,23 @@ public class ShipmentService {
             throw new RuntimeException("Driver can only be assigned to OPEN shipments");
         }
 
+        try {
+            userServiceClient.getDriverById(driverId);
+        } catch (Exception e) {
+            throw new RuntimeException("Validation failed: Driver with ID " + driverId + " does not exist.");
+        }
+
         shipment.setAssignedDriverId(driverId);
         shipment.setStatus(ShipmentStatus.ASSIGNED);
-        return shipmentRepository.save(shipment);
+
+        Shipment savedShipment = shipmentRepository.save(shipment);
+
+        userServiceClient.incrementAcceptedTrips(driverId);
+
+        return savedShipment;
     }
 
+    @Transactional
     public Shipment updateStatus(String id, String status) {
         Shipment shipment = getShipmentById(id);
 
@@ -91,7 +116,17 @@ public class ShipmentService {
         validateStatusTransition(shipment.getStatus(), newStatus);
 
         shipment.setStatus(newStatus);
-        return shipmentRepository.save(shipment);
+        Shipment savedShipment = shipmentRepository.save(shipment);
+
+        // SIDE EFFECTS: Update User_Service based on new status
+        if (newStatus == ShipmentStatus.DELIVERED && savedShipment.getAssignedDriverId() != null) {
+            userServiceClient.incrementCompletedTrips(savedShipment.getAssignedDriverId());
+        }
+        else if (newStatus == ShipmentStatus.CANCELLED && savedShipment.getAssignedDriverId() != null) {
+            userServiceClient.incrementCancelledTrips(savedShipment.getAssignedDriverId());
+        }
+
+        return savedShipment;
     }
 
     public void deleteShipment(String id) {

@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: ShipmentService
@@ -8,17 +11,22 @@ spring:
     password: Sharan@2005
 
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-
   jackson:
     deserialization:
       fail-on-null-for-primitives: false
 
+  cloud:
+    openfeign:
+      httpclient:
+        hc5:
+          enabled: true
 
 user-service:
-  url: http://localhost:8081
+  url: http://localhost:8080

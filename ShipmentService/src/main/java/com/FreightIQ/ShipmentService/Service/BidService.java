@@ -10,6 +10,7 @@ import com.FreightIQ.ShipmentService.Repository.BidRepository;
 import com.FreightIQ.ShipmentService.Repository.ShipmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -64,6 +65,7 @@ public class BidService {
         return bidRepository.findByShipmentIdAndStatus(shipmentId, BidStatus.PENDING);
     }
 
+    @Transactional
     public Bid acceptBid(String bidId) {
         Bid bid = getBidById(bidId);
 

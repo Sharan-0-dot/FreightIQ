@@ -5,6 +5,7 @@ import com.FrightIQ.User_Service.Repository.DriverRepository;
 import com.FrightIQ.User_Service.Repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final DriverRepository driverRepository;  // to validate driver exists
 
+    @Transactional
     public Vehicle addVehicle(Vehicle vehicle) {
         if (!driverRepository.existsById(vehicle.getDriverId())) {
             throw new RuntimeException("Driver not found with id: " + vehicle.getDriverId());

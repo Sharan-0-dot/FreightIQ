@@ -5,6 +5,7 @@ import com.FrightIQ.User_Service.Entities.Company;
 import com.FrightIQ.User_Service.Repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class CompanyService {
     private final CompanyRepository companyRepository;
 
+    @Transactional
     public Company registerCompany(CompanyRequestDTO dto) {
         if (companyRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Company with this email already exists");
@@ -48,6 +50,7 @@ public class CompanyService {
                 .orElseThrow(() -> new RuntimeException("Company not found with id: " + id));
     }
 
+    @Transactional
     public Company updateCompany(String id, CompanyRequestDTO dto) {
         Company existing = getCompanyById(id);
 

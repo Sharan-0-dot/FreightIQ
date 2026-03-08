@@ -9,6 +9,7 @@ import com.FreightIQ.ShipmentService.Repository.ReviewRepository;
 import com.FreightIQ.ShipmentService.Repository.ShipmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class ReviewService {
     private final ShipmentRepository shipmentRepository;
     private final UserServiceClient userServiceClient;
 
+
+    @Transactional
     public Review submitReview(ReviewRequestDTO dto) {
         // Shipment must exist and be DELIVERED
         Shipment shipment = shipmentRepository.findById(dto.getShipmentId())

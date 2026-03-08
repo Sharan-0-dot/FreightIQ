@@ -29,10 +29,10 @@ public class Bid {
     private Double bidAmount;
     private Integer estimatedDeliveryDays;
 
-    private String note;   // optional message from driver to company
+    private String note;
 
     @Enumerated(EnumType.STRING)
-    private BidStatus status;   // PENDING, ACCEPTED, REJECTED, WITHDRAWN
+    private BidStatus status;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
