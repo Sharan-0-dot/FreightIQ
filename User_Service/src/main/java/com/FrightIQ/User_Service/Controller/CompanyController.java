@@ -22,6 +22,15 @@ public class CompanyController {
         }
     }
 
+    @PostMapping("/login/{email}")
+    public ResponseEntity<?> loginCompany(@PathVariable String email) {
+        try {
+            return new ResponseEntity<>(companyService.loginByEmail(email), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllCompanies() {
         return new ResponseEntity<>(companyService.getAllCompanies(), HttpStatus.OK);

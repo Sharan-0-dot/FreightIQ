@@ -41,6 +41,11 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
+    public Company loginByEmail(String email) {
+        return companyRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Company with email " + email + " not found."));
+    }
+
     public List<Company> getAllCompanies() {
         return companyRepository.findAll();
     }

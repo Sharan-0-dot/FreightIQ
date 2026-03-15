@@ -43,6 +43,11 @@ public class DriverService {
         return driverRepository.save(driver);
     }
 
+    public Driver loginByPhone(String phone) {
+        return driverRepository.findByPhone(phone)
+                .orElseThrow(() -> new RuntimeException("Driver with phone " + phone + " not found."));
+    }
+
     public List<Driver> getAllDrivers() {
         return driverRepository.findAll();
     }

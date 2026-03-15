@@ -23,6 +23,15 @@ public class DriverController {
         }
     }
 
+    @PostMapping("/login/{phone}")
+    public ResponseEntity<?> loginDriver(@PathVariable String phone) {
+        try {
+            return new ResponseEntity<>(driverService.loginByPhone(phone), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllDrivers() {
         return new ResponseEntity<>(driverService.getAllDrivers(), HttpStatus.OK);
