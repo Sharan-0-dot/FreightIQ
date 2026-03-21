@@ -1,0 +1,22 @@
+# Environment — never commit real secrets
+.env
+
+# IntelliJ (in case .idea/.gitignore misses anything)
+.idea/
+
+# Spring Boot build output
+*/target/
+
+# Python
+__pycache__/
+*.pyc
+ML_Service/venv/
+ML_Service/.venv/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# OS
+.DS_Store
+Thumbs.db

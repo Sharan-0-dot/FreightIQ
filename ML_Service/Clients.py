@@ -18,14 +18,8 @@
 import asyncio
 import httpx
 from typing import List, Optional, Tuple
-
+from config import USER_SERVICE_URL, SHIPMENT_SERVICE_URL
 from Shemas import ShipmentData, BidData, DriverData, VehicleData
-
-# ── Service base URLs ─────────────────────────────────────
-# Change these if your Spring Boot services run on
-# different ports or hosts (e.g. in Docker).
-SHIPMENT_SERVICE_URL = "http://localhost:8081"
-USER_SERVICE_URL     = "http://localhost:8080"
 
 # How long to wait for a response before giving up (seconds)
 TIMEOUT = 10.0

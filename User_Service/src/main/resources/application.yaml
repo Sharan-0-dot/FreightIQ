@@ -1,3 +1,6 @@
+server:
+  port: ${USER_SERVICE_PORT:8080}
+
 spring:
   application:
     name: User_Service

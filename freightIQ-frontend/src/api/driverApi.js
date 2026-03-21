@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE = "http://localhost:8080/api/drivers";
+const BASE = `${import.meta.env.VITE_USER_SERVICE_URL}/api/drivers`;
 
 export const registerDriver = (data) => axios.post(BASE, data);
 export const loginDriver = (phone) => axios.post(`${BASE}/login/${phone}`);

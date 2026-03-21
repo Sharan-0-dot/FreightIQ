@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE = "http://localhost:8081/api";
+const BASE = `${import.meta.env.VITE_SHIPMENT_SERVICE_URL}/api`;
 
 export const postShipment = (data) => axios.post(`${BASE}/shipments`, data);
 export const getAllShipments = () => axios.get(`${BASE}/shipments`);
