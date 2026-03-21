@@ -4,13 +4,14 @@ import {
   Package, MapPin, Calendar, ChevronLeft, Loader2,
   Truck, Star, CheckCircle, Clock, AlertTriangle,
   Flame, Snowflake, Trash2, RefreshCw, User,
-  Weight, Zap, DollarSign, Shield
+  Weight, Zap, DollarSign, Shield, Sparkles, Trophy, Medal, Award
 } from "lucide-react";
 import {
   getShipmentById, getBidsForShipment, acceptBid,
   updateShipmentStatus, assignDriver, deleteShipment
 } from "../../api/shipmentApi";
 import { getDriverById } from "../../api/driverApi";
+import { getMLRecommendations } from "../../api/mlApi";
 
 const STATUS_STYLES = {
   OPEN:       { label: "Open",        class: "bg-green-500/10 text-green-400 border-green-500/20" },
@@ -50,6 +51,10 @@ export default function ShipmentDetail() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState("");
   const [error, setError] = useState("");
+  const [recommendations, setRecommendations] = useState([]);
+  const [recLoading, setRecLoading] = useState(false);
+  const [recError, setRecError] = useState("");
+  const [recFetched, setRecFetched] = useState(false);
 
   useEffect(() => {
     fetchAll();
@@ -121,6 +126,20 @@ export default function ShipmentDetail() {
       navigate("/company/shipments");
     } catch {
       setError("Failed to delete shipment.");
+    }
+  };
+
+  const handleGetRecommendations = async () => {
+    setRecLoading(true);
+    setRecError("");
+    try {
+      const res = await getMLRecommendations(id);
+      setRecommendations(res.data.recommendations);
+      setRecFetched(true);
+    } catch {
+      setRecError("Failed to get recommendations. Make sure the ML service is running on port 8000.");
+    } finally {
+      setRecLoading(false);
     }
   };
 
@@ -248,6 +267,199 @@ export default function ShipmentDetail() {
               <Truck size={16} className="text-blue-400" /> Assigned driver
             </h2>
             <DriverCard driver={assignedDriver} bid={acceptedBid} isAssigned />
+          </div>
+        )}
+
+        {/* AI Recommendation section */}
+        {shipment.status === "OPEN" && pendingBids.length > 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-purple-500/10 border border-purple-500/20 rounded-lg flex items-center justify-center">
+                  <Sparkles size={16} className="text-purple-400" />
+                </div>
+                <div>
+                  <h2 className="text-white font-semibold">AI Driver Recommendation</h2>
+                  <p className="text-gray-500 text-xs mt-0.5">
+                    Ranks drivers based on rating, experience, on-time rate, and your priority
+                  </p>
+                </div>
+              </div>
+        
+              {!recFetched && (
+                <button
+                  onClick={handleGetRecommendations}
+                  disabled={recLoading}
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-400 text-sm font-medium rounded-xl transition-colors shrink-0"
+                >
+                  {recLoading ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={14} />
+                  )}
+                  {recLoading ? "Analysing drivers..." : "Get recommendation"}
+                </button>
+              )}
+
+              {recFetched && (
+                <button
+                  onClick={() => { setRecFetched(false); setRecommendations([]); }}
+                  className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+            
+            {recError && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-red-400 text-sm mt-4">
+                {recError}
+              </div>
+            )}
+
+            {/* Recommendation cards */}
+            {recFetched && recommendations.length > 0 && (
+              <div className="mt-6 space-y-3">
+                {recommendations.map((rec) => {
+                  const driver = driverMap[rec.driverId];
+                  const bid = pendingBids.find((b) => b.driverId === rec.driverId);
+                  const onTimeRate = driver?.totalAcceptedTrips
+                    ? (((driver.totalAcceptedTrips - (driver.totalDelayedTrips || 0)) / driver.totalAcceptedTrips) * 100).toFixed(0)
+                    : null;
+                
+                  const rankConfig = {
+                    1: {
+                      icon: <Trophy size={16} className="text-yellow-400" />,
+                      label: "Best match",
+                      border: "border-yellow-500/30",
+                      bg: "bg-yellow-500/5",
+                      badge: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+                      scoreColor: "text-yellow-400",
+                    },
+                    2: {
+                      icon: <Medal size={16} className="text-gray-400" />,
+                      label: "2nd choice",
+                      border: "border-gray-600/40",
+                      bg: "bg-gray-800/40",
+                      badge: "bg-gray-500/10 text-gray-400 border-gray-500/20",
+                      scoreColor: "text-gray-300",
+                    },
+                    3: {
+                      icon: <Award size={16} className="text-orange-400/70" />,
+                      label: "3rd choice",
+                      border: "border-orange-500/20",
+                      bg: "bg-orange-500/5",
+                      badge: "bg-orange-500/10 text-orange-400/70 border-orange-500/20",
+                      scoreColor: "text-orange-400/70",
+                    },
+                  }[rec.rank];
+                
+                  return (
+                    <div
+                      key={rec.driverId}
+                      className={`border rounded-2xl p-5 ${rankConfig.border} ${rankConfig.bg}`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3 flex-1 min-w-0">
+                  
+                          {/* Rank badge */}
+                          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium shrink-0 ${rankConfig.badge}`}>
+                            {rankConfig.icon}
+                            {rankConfig.label}
+                          </div>
+                  
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white font-semibold text-sm mb-1">
+                              {driver?.name || "Driver"}
+                            </p>
+                  
+                            {/* Driver stats */}
+                            {driver && (
+                              <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500 mb-3">
+                                {driver.ratingAverage && (
+                                  <span className="flex items-center gap-1 text-yellow-400">
+                                    <Star size={11} className="fill-yellow-400" />
+                                    {driver.ratingAverage.toFixed(1)}
+                                  </span>
+                                )}
+                                <span className="flex items-center gap-1">
+                                  <CheckCircle size={11} />
+                                  {driver.totalCompletedTrips ?? 0} trips
+                                </span>
+                                {onTimeRate && (
+                                  <span className="flex items-center gap-1 text-green-400">
+                                    <Clock size={11} /> {onTimeRate}% on time
+                                  </span>
+                                )}
+                                <span>{driver.experienceYears} yrs exp</span>
+                                {driver.incidentCount > 0 && (
+                                  <span className="flex items-center gap-1 text-red-400">
+                                    <AlertTriangle size={11} /> {driver.incidentCount} incidents
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Bid info */}
+                            {bid && (
+                              <div className="flex items-center gap-4 text-sm">
+                                <div>
+                                  <p className="text-gray-500 text-xs">Bid amount</p>
+                                  <p className="text-green-400 font-bold">
+                                    ₹{bid.bidAmount?.toLocaleString()}
+                                  </p>
+                                </div>
+                                <div>
+                                  <p className="text-gray-500 text-xs">Est. delivery</p>
+                                  <p className="text-white font-medium">
+                                    {bid.estimatedDeliveryDays} days
+                                  </p>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                          
+                        {/* Score + Accept */}
+                        <div className="flex flex-col items-end gap-3 shrink-0">
+                          <div className="text-right">
+                            <p className="text-gray-500 text-xs">Match score</p>
+                            <p className={`text-2xl font-bold ${rankConfig.scoreColor}`}>
+                              {rec.score}
+                            </p>
+                            <p className="text-gray-600 text-xs">out of 100</p>
+                          </div>
+                          
+                          {bid && shipment.status === "OPEN" && (
+                            <button
+                              onClick={() => handleAcceptBid(bid)}
+                              disabled={actionLoading === `accept-${bid.id}`}
+                              className="flex items-center gap-2 px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 text-green-400 text-sm font-medium rounded-xl transition-colors"
+                            >
+                              {actionLoading === `accept-${bid.id}`
+                                ? <Loader2 size={14} className="animate-spin" />
+                                : <CheckCircle size={14} />}
+                              Accept
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <p className="text-gray-600 text-xs text-center pt-1">
+                  Scores are generated by the FreightIQ ML model
+                </p>
+              </div>
+            )}
+
+            {/* Empty state — no pending bids to rank */}
+            {recFetched && recommendations.length === 0 && (
+              <div className="mt-4 text-center py-6 text-gray-500 text-sm">
+                No drivers to rank yet.
+              </div>
+            )}
           </div>
         )}
 
