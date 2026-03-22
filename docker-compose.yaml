@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  user-service:
+    image: sharansc/user-service:latest
+    container_name: user-service
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - freightiq-net
+
+  shipment-service:
+    image: sharansc/shipment-service:latest
+    container_name: shipment-service
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    depends_on:
+      - user-service
+    networks:
+      - freightiq-net
+
+  ml-service:
+    image: sharansc/ml-service:latest
+    container_name: ml-service
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - user-service
+      - shipment-service
+    networks:
+      - freightiq-net
+
+  frontend:
+    image: sharansc/freight-frontend:latest
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - user-service
+      - shipment-service
+      - ml-service
+    networks:
+      - freightiq-net
+
+networks:
+  freightiq-net:
+    driver: bridge

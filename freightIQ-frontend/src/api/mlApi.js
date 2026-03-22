@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const ML_BASE = `${import.meta.env.VITE_ML_SERVICE_URL}`;
+const ML_BASE = "/api/ml";
 
 export const getMLRecommendations = (shipmentId) =>
-  axios.post(`${ML_BASE}/api/recommend`, { shipmentId }); 
+  axios.post(`${ML_BASE}/api/recommend`, { shipmentId });  

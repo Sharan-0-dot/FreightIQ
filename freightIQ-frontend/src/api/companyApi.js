@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE = `${import.meta.env.VITE_USER_SERVICE_URL}/api/companies`;
+const BASE = "/api/user/api/companies";
 
 export const registerCompany = (data) => axios.post(BASE, data);
 export const loginCompany = (email) => axios.post(`${BASE}/login/${email}`);

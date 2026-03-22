@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const ROOT_URL = import.meta.env.VITE_USER_SERVICE_URL;
+const ROOT_URL = "api/user";
 
-const DRIVER_BASE = `${ROOT_URL}/api/drivers`;
+const DRIVER_BASE = `${ROOT_URL}/api/drivers`; 
 const VEHICLE_BASE = `${ROOT_URL}/api/vehicles`;
 
 export const registerDriver = (data) => axios.post(DRIVER_BASE, data);

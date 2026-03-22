@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const BASE = `${import.meta.env.VITE_SHIPMENT_SERVICE_URL}/api`;
+const BASE = "/api/shipment/api";
 
 export const postShipment = (data) => axios.post(`${BASE}/shipments`, data);
 export const getAllShipments = () => axios.get(`${BASE}/shipments`);
 export const getShipmentById = (id) => axios.get(`${BASE}/shipments/${id}`);
-export const getShipmentsByCompany = (companyId) => axios.get(`${BASE}/shipments/company/${companyId}`);
+export const getShipmentsByCompany = (companyId) => axios.get(`${BASE}/shipments/company/${companyId}`); 
 export const getShipmentsByStatus = (status) => axios.get(`${BASE}/shipments/status/${status}`);
 export const updateShipmentStatus = (id, status) => axios.patch(`${BASE}/shipments/${id}/status?status=${status}`);
 export const assignDriver = (shipmentId, driverId) => axios.patch(`${BASE}/shipments/${shipmentId}/assign-driver/${driverId}`);
