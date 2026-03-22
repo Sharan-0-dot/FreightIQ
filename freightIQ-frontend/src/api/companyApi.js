@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE = "/api/user/api/companies";
+const BASE = "/api/user/companies";
 
 export const registerCompany = (data) => axios.post(BASE, data);
 export const loginCompany = (email) => axios.post(`${BASE}/login/${email}`);

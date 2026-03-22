@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE = "/api/shipment/api";
+const BASE = "/api/shipment";
 
 export const postShipment = (data) => axios.post(`${BASE}/shipments`, data);
 export const getAllShipments = () => axios.get(`${BASE}/shipments`);

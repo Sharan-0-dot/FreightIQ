@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const ROOT_URL = "api/user";
+const ROOT_URL = "/api/user";
 
-const DRIVER_BASE = `${ROOT_URL}/api/drivers`; 
-const VEHICLE_BASE = `${ROOT_URL}/api/vehicles`;
+const DRIVER_BASE = `${ROOT_URL}/drivers`;
+const VEHICLE_BASE = `${ROOT_URL}/vehicles`;
 
 export const registerDriver = (data) => axios.post(DRIVER_BASE, data);
 export const loginDriver = (phone) => axios.post(`${DRIVER_BASE}/login/${phone}`);

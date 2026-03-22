@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+
   user-service:
     image: sharansc/user-service:latest
     container_name: user-service
@@ -8,8 +9,14 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    environment:
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     networks:
       - freightiq-net
+
 
   shipment-service:
     image: sharansc/shipment-service:latest
@@ -18,10 +25,17 @@ services:
       - "8081:8081"
     env_file:
       - .env
+    environment:
+      SHIPMENT_SERVICE_PORT: ${SHIPMENT_SERVICE_PORT}
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
     depends_on:
       - user-service
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     networks:
       - freightiq-net
+
 
   ml-service:
     image: sharansc/ml-service:latest
@@ -30,23 +44,44 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      ML_SERVICE_PORT: ${ML_SERVICE_PORT}
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
+      SHIPMENT_SERVICE_URL: ${SHIPMENT_SERVICE_URL}
     depends_on:
       - user-service
       - shipment-service
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     networks:
       - freightiq-net
+
 
   frontend:
     image: sharansc/freight-frontend:latest
     container_name: frontend
     ports:
       - "80:80"
+    env_file:
+      - .env
+    environment:
+      FRONTEND_PORT: ${FRONTEND_PORT}
+      FRONTEND_URL: ${FRONTEND_URL}
+
+      VITE_USER_SERVICE_URL: ${VITE_USER_SERVICE_URL}
+      VITE_SHIPMENT_SERVICE_URL: ${VITE_SHIPMENT_SERVICE_URL}
+      VITE_ML_SERVICE_URL: ${VITE_ML_SERVICE_URL}
     depends_on:
       - user-service
       - shipment-service
       - ml-service
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     networks:
       - freightiq-net
+
 
 networks:
   freightiq-net:
