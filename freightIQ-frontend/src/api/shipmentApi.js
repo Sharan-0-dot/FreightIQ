@@ -21,5 +21,3 @@ export const withdrawBid = (bidId) => axios.patch(`${BASE}/bids/${bidId}/withdra
 export const submitReview = (data) => axios.post(`${BASE}/reviews`, data);
 export const getReviewsByDriver = (driverId) => axios.get(`${BASE}/reviews/driver/${driverId}`);
 export const getReviewByShipment = (shipmentId) => axios.get(`${BASE}/reviews/shipment/${shipmentId}`);
-
-export const getMLRecommendations = (shipmentId, driverIds) => axios.post("http://localhost:8000/api/recommend", { shipmentId, driverIds });

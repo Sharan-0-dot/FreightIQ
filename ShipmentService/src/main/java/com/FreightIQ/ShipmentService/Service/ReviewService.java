@@ -53,7 +53,7 @@ public class ReviewService {
         Review saved = reviewRepository.save(review);
 
         // Push stats back to User Service
-        userServiceClient.incrementCompletedTrips(dto.getDriverId());
+
         userServiceClient.updateDriverRating(dto.getDriverId(), dto.getRating());
 
         if (dto.isDelayOccurred()) {

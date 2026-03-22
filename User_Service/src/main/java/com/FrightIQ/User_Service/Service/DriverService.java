@@ -116,14 +116,18 @@ public class DriverService {
         }
 
         Driver driver = getDriverById(id);
-        int totalReviews = driver.getTotalCompletedTrips(); // reviews = completed trips
 
-        if (totalReviews == 0) {
+        int currentTotalTrips = driver.getTotalCompletedTrips();
+
+        if (currentTotalTrips <= 1) {
             driver.setRatingAverage(newRating);
         } else {
-            // Rolling average: ((currentAvg * totalReviews) + newRating) / (totalReviews + 1)
-            double updatedAvg = ((driver.getRatingAverage() * totalReviews) + newRating) / (totalReviews + 1);
-            driver.setRatingAverage(Math.round(updatedAvg * 100.0) / 100.0); // round to 2 decimal places
+            int previousTripCount = currentTotalTrips - 1;
+            double currentAvg = driver.getRatingAverage();
+
+            double updatedAvg = ((currentAvg * previousTripCount) + newRating) / currentTotalTrips;
+
+            driver.setRatingAverage(Math.round(updatedAvg * 100.0) / 100.0);
         }
 
         return driverRepository.save(driver);
