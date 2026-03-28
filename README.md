@@ -6,6 +6,8 @@ FreightIQ removes that middleman. Companies post shipments, drivers place bids, 
 
 The project is built as a microservices system using Java Spring Boot, Python FastAPI, and a React frontend.
 
+**Live:** [https://freightiq.duckdns.org](https://freightiq.duckdns.org)
+
 ---
 
 ## How it works
@@ -23,7 +25,7 @@ FreightIQ/
 ├── User_Service/       Java Spring Boot — port 8080
 ├── Shipment_Service/   Java Spring Boot — port 8081
 ├── ML_Service/         Python FastAPI   — port 8000
-├── frontend/           React + Vite     — port 5173
+├── frontend/           React + Vite     — port 3000 (Docker) / 5173 (local dev)
 ├── docker-compose.yml
 └── .env
 ```
@@ -188,6 +190,60 @@ The recommendation UI in the shipment detail page shows each ranked driver with 
 
 ---
 
+## Deployment
+
+The full stack is deployed on AWS using Docker Compose with an SSL certificate. The application is live at **[https://freightiq.duckdns.org](https://freightiq.duckdns.org)**.
+
+### Docker Hub images
+
+All images are published under `sharansc/` on Docker Hub.
+
+| Image | Tag |
+|---|---|
+| sharansc/user-service | latest |
+| sharansc/shipment-service | latest |
+| sharansc/ml-service | latest |
+| sharansc/freight-frontend | latest |
+
+
+### Resource limits
+
+Each service runs with explicit CPU and memory caps to stay within EC2 instance constraints.
+
+| Service | CPU limit | Memory limit |
+|---|---|---|
+| user-service | 0.5 cores | 400 MB |
+| shipment-service | 0.5 cores | 400 MB |
+| ml-service | 0.7 cores | 500 MB |
+| frontend | 0.3 cores | 200 MB |
+
+All services use `restart: unless-stopped` and JSON file logging with rotation (10 MB per file, 3 files max).
+
+
+### Key notes about networking
+
+All services communicate on the `freightiq-net` bridge network. Inter-service calls (Feign client, ML httpx) use Docker service names as hostnames: `http://user-service:8080`, `http://shipment-service:8081`. The frontend container runs on port 3000 on the host (mapped from Nginx port 80 inside the container). `VITE_*` env vars are baked into the React build at image build time and point to the public domain.
+
+### Start the stack
+
+```bash
+docker compose up -d
+```
+
+### Stop the stack
+
+```bash
+docker compose down
+```
+
+### Pull latest images and restart
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+---
+
 ## Running locally
 
 Services must be started in this order because of the Feign client dependency between them.
@@ -200,3 +256,37 @@ Services must be started in this order because of the Feign client dependency be
 ```
 
 All service URLs and database credentials are configured through a single `.env` file at the project root. Copy `.env.example` to `.env` and fill in your values before starting anything.
+
+---
+
+## Port reference
+
+| Service | Local dev | Docker (AWS) |
+|---|---|---|
+| User Service | 8080 | 8080 |
+| Shipment Service | 8081 | 8081 |
+| ML Service | 8000 | 8000 |
+| Frontend | 5173 | 3000 |
+
+---
+
+## Current status
+
+### Completed ✓
+
+- User Service (Spring Boot) ✓
+- Shipment Service (Spring Boot) ✓
+- ML Service (FastAPI + XGBoost, ROC-AUC 0.91) ✓
+- Frontend — all company + driver pages ✓
+- AI recommendation wired end to end ✓
+- Docker — all 4 services containerised ✓
+- Docker Hub — all images pushed under sharansc/ ✓
+- docker-compose.yml — full stack runs with single command ✓
+- Deployed on AWS with SSL certificate ✓
+- Live at https://freightiq.duckdns.org ✓
+
+### Planned
+
+- Kafka notification service
+- Gemini insight service (explains why a driver was ranked #1)
+- API Gateway — Spring Cloud Gateway

@@ -4,23 +4,28 @@ services:
 
   user-service:
     image: sharansc/user-service:latest
-    container_name: user-service
     ports:
       - "8080:8080"
     env_file:
       - .env
     environment:
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 400M
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - freightiq-net
 
-
   shipment-service:
     image: sharansc/shipment-service:latest
-    container_name: shipment-service
     ports:
       - "8081:8081"
     env_file:
@@ -30,16 +35,22 @@ services:
       USER_SERVICE_URL: ${USER_SERVICE_URL}
     depends_on:
       - user-service
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 400M
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - freightiq-net
 
-
   ml-service:
     image: sharansc/ml-service:latest
-    container_name: ml-service
     ports:
       - "8000:8000"
     env_file:
@@ -51,24 +62,29 @@ services:
     depends_on:
       - user-service
       - shipment-service
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.7"
+          memory: 500M
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - freightiq-net
 
-
   frontend:
     image: sharansc/freight-frontend:latest
-    container_name: frontend
     ports:
-      - "80:80"
+      - "3000:80"
     env_file:
       - .env
     environment:
       FRONTEND_PORT: ${FRONTEND_PORT}
       FRONTEND_URL: ${FRONTEND_URL}
-
       VITE_USER_SERVICE_URL: ${VITE_USER_SERVICE_URL}
       VITE_SHIPMENT_SERVICE_URL: ${VITE_SHIPMENT_SERVICE_URL}
       VITE_ML_SERVICE_URL: ${VITE_ML_SERVICE_URL}
@@ -76,12 +92,19 @@ services:
       - user-service
       - shipment-service
       - ml-service
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.3"
+          memory: 200M
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - freightiq-net
-
 
 networks:
   freightiq-net:
